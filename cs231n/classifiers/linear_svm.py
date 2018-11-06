@@ -27,7 +27,7 @@ def svm_loss_naive(W, X, y, reg):
   loss = 0.0
 
   correct_class_index=0
-
+  
   for i in range(num_train):
     nnot_correct_below_margin=0
     scores = X[i].dot(W)
@@ -51,17 +51,9 @@ def svm_loss_naive(W, X, y, reg):
   # Add regularization to the loss.
   loss += reg * np.sum(W * W)
 
-  #############################################################################
-  # TODO:                                                                     #
-  # Compute the gradient of the loss function and store it dW.                #
-  # Rather that first computing the loss and then computing the derivative,   #
-  # it may be simpler to compute the derivative at the same time that the     #
-  # loss is being computed. As a result you may need to modify some of the    #
-  # code above to compute the gradient.                                       #
-  #############################################################################
-
-  # TODO  should I average the gradient over all training points ?
   dW/= num_train
+  # TODO is regularization gradient computed as below? is reg added at all to grad?
+  #dW += reg * np.sum(W * W)
   return loss, dW
 
 
@@ -79,7 +71,17 @@ def svm_loss_vectorized(W, X, y, reg):
   # Implement a vectorized version of the structured SVM loss, storing the    #
   # result in loss.                                                           #
   #############################################################################
-  pass
+  num_train = X.shape[0]
+  #scores is [N,C]
+  scores = X.dot(W)
+  #y is[N,1] want to remove each row of y from corresponding row of scores
+  #TODO we want to remove the SCORE of the correct label
+  correct_scores=scores[np.arange(scores.shape[0]), y]
+  margins = (scores.transpose() - correct_scores).transpose() + 1
+  margins=margins.clip(min=0)
+  loss = np.sum(margins)
+  loss /= num_train
+  loss += reg * np.sum(W * W)
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
