@@ -75,13 +75,13 @@ def svm_loss_vectorized(W, X, y, reg):
   #scores is [N,C]
   scores = X.dot(W)
   #y is[N,1] want to remove each row of y from corresponding row of scores
-  #TODO we want to remove the SCORE of the correct label
   correct_scores=scores[np.arange(scores.shape[0]), y]
   margins = (scores.transpose() - correct_scores).transpose() + 1
   margins=margins.clip(min=0)
   loss = np.sum(margins)
   loss /= num_train
   loss += reg * np.sum(W * W)
+  #TODO there is a -1 difference to find yet bet vectorized and non
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
