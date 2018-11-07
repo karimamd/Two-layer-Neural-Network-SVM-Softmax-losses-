@@ -29,7 +29,7 @@ def svm_loss_naive(W, X, y, reg):
   correct_class_index=0
   
   for i in range(num_train):
-    nnot_correct_below_margin=0
+    nnot_correct_above_margin=0
     scores = X[i].dot(W)
     correct_class_score = scores[y[i]]
     for j in range(num_classes):
@@ -39,10 +39,10 @@ def svm_loss_naive(W, X, y, reg):
       margin = scores[j] - correct_class_score + 1 # note delta = 1
       if margin > 0:
         loss += margin
-        nnot_correct_below_margin+=1
+        nnot_correct_above_margin+=1
         dW[:,j]+=X[i]
 
-    dW[:,correct_class_index]-=nnot_correct_below_margin*X[i]
+    dW[:,correct_class_index]-=nnot_correct_above_margin*X[i]
 
   # Right now the loss is a sum over all training examples, but we want it
   # to be an average instead so we divide by num_train.
@@ -81,7 +81,8 @@ def svm_loss_vectorized(W, X, y, reg):
   loss = np.sum(margins)
   loss /= num_train
   loss += reg * np.sum(W * W)
-  #TODO there is a -1 difference to find yet bet vectorized and non
+  #TODO there is a -1 difference to find yet bet vectorized and loop version idk why
+
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
@@ -96,7 +97,21 @@ def svm_loss_vectorized(W, X, y, reg):
   # to reuse some of the intermediate values that you used to compute the     #
   # loss.                                                                     #
   #############################################################################
-  pass
+  #TODO but we want the correct class to have a zero not a 1
+  #now all classes that exceed margin have value 1 so when multipled 
+  # by x[i] yeilds x[i] gradient addition
+  margins[margins > 0] = 1
+  margins_ones=margins
+  #set correct class margins=0
+  margins_ones[np.arange(margins_ones.shape[0]),y]=np.zeros([ margins_ones.shape[0] ])
+  #set correct class margin value = number of incorrect classes above margin
+  margins_ones[np.arange(margins_ones.shape[0]),y]=-margins_ones.sum(axis=1)
+
+  dW+=X.transpose().dot(margins_ones)
+  #normalize gradient
+  dW/= num_train
+
+  
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
