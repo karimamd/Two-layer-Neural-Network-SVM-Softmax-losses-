@@ -95,6 +95,7 @@ class TwoLayerNet(object):
         # in the variable loss, which should be a scalar. Use the Softmax           #
         # classifier loss.                                                          #
         #############################################################################
+
         prob_unnormalized = np.exp(scores)
         prob_normalized = prob_unnormalized / np.sum(prob_unnormalized, axis=1)[:, np.newaxis]
         correct_prob_normalized = prob_normalized[range(N), y]
@@ -109,6 +110,16 @@ class TwoLayerNet(object):
 
         # Backward pass: compute gradients
         grads = {}
+        prob_normalized[range(N), y] -= 1
+        prob_normalized /= N
+        grads['W2'] = np.dot(hidden_layer.T, prob_normalized)
+        grads['b2'] = np.sum(prob_normalized, axis=0)
+        activation_func = np.dot(prob_normalized, W2.T)
+        activation_func[X.dot(W1) + b1 <= 0] = 0
+        grads['W1'] = np.dot(X.T, activation_func)
+        grads['b1'] = np.sum(activation_func, axis=0)
+        grads['W2'] += reg * W2
+        grads['W1'] += reg * W1
         #############################################################################
         # TODO: Compute the backward pass, computing the derivatives of the weights #
         # and biases. Store the results in the grads dictionary. For example,       #
@@ -151,9 +162,9 @@ class TwoLayerNet(object):
         val_acc_history = []
 
         for it in range(num_iters):
-            X_batch = None
-            y_batch = None
-
+            indices = np.random.choice(num_train, batch_size)
+            X_batch = X[indices]
+            y_batch = y[indices]
             #########################################################################
             # TODO: Create a random minibatch of training data and labels, storing  #
             # them in X_batch and y_batch respectively.                             #
@@ -167,6 +178,10 @@ class TwoLayerNet(object):
             loss, grads = self.loss(X_batch, y=y_batch, reg=reg)
             loss_history.append(loss)
 
+            self.params['W1'] += -learning_rate * grads['W1']
+            self.params['b1'] += -learning_rate * grads['b1']
+            self.params['W2'] += -learning_rate * grads['W2']
+            self.params['b2'] += -learning_rate * grads['b2']
             #########################################################################
             # TODO: Use the gradients in the grads dictionary to update the         #
             # parameters of the network (stored in the dictionary self.params)      #
@@ -213,7 +228,8 @@ class TwoLayerNet(object):
           the elements of X. For all i, y_pred[i] = c means that X[i] is predicted
           to have class c, where 0 <= c < C.
         """
-        y_pred = None
+        scores = self.loss(X, reg=0.0)
+        y_pred = np.argmax(scores, axis=1)
 
         ###########################################################################
         # TODO: Implement this function; it should be VERY simple!                #
