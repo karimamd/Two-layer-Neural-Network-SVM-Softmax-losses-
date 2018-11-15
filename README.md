@@ -1,20 +1,24 @@
 Details about this assignment can be found [on the course webpage](http://cs231n.github.io/), under Assignment #1 of Fall 2018.
 
-#	Computer Vision Assignment #2 @ FOE Alexandria University
 
+#	Computer Vision Assignment #2 @ FOE Alexandria University
  Zyad Shokry Abozaid        3517
+ 
  Kareem Ahmed Abdelsalam    3356
 
 ## Contents
- 1-Implementing and applying a **k-Nearest Neighbor (kNN)** classifier
- 
- 2-Implementing and applying a **Multiclass Support Vector Machine (SVM)** classifier
- 
- 3-Implementing and applying a **Softmax** classifier
- 
- 4-Implementing and applying a **Two Layer Neural Network** classifier
- 
- 5-Exploring performance improvements from using **higher-level representations** than raw pixels (e.g. color histograms, Histogram of Gradient (HOG) features)
+
+1.  **k-Nearest Neighbor (kNN)** classifier
+
+2.   **Multiclass Support Vector Machine (SVM)** classifier
+
+3.   **Softmax** classifier
+
+4.   **Two Layer Neural Network** classifier
+5.  Exploring performance improvements from using **higher-level representations** than raw pixels 
+(e.g. color histograms, Histogram of Gradient (HOG) features)
+
+6.  Methodologies
 
 ##  - kNN
 
@@ -68,15 +72,19 @@ it allows decreasing complexity of the model to keep away from overfitting
 and also makes features have equal importance in generating the final score.
 Also,including the L2 penalty leads to the appealing max margin property in SVMs
 
+5-Softmax uses hinge loss and determining margin helps choose how sharp we want our classification to be (of course this implies more complexity in the model and thats why the margin and regression strength are inversly proportional)
+
 
 ##  - Softmax Loss
 
 ##### Assumptions
-
+Same as SVM assumptions
 ##### Test Cases
-
+Obtained 35.6% test accuracy and 36.7% Validation accuracy with same conditions as SVM.
 ##### Key Takeaways
-
+1. Softmax is a probabilistic classifier that output the probability of each class for a point and chooses the point with the highest score and it can be said that SVM is a special case of Softmax.
+2. Softmax is highly affected by outliers unlike SVM loss.
+3. Softmax uses Cross-entropy loss.
 
 ##  - Two-Layer Neural Network
 
@@ -84,18 +92,34 @@ Also,including the L2 penalty leads to the appealing max margin property in SVMs
 
 ##### Test Cases
 
+Trained the network on 49k datapoints and tested on 1k datapoints and 1k validation set.
+Initially optained a validation accuracy of 28.7% then after hyperparameter tuning (Learning rate and hidden layer size only) obtained validation accuracy of 48.7% and test accuracy of 49.3%.
+
 ##### Key Takeaways
+1. Choosing learning rate is the highest priority when training neural networks due to its high acontribution to the accuracy.
+
+2. Neural Networks are highly prone to overfitting so some tricks need to be done to prevent that from happening.
+
+3. visualizing loss history per epoch and classification accuracy are useful tools for debugging.
 
 
-##  - Features
+
+
+
+##  - Higher Level Representations
 
 ##### Assumptions
+1. Assuming the Histogram of Oriented Gradients and color histogram implementations by cs231n is implemented correctly
+2. Assuming that concatenating features of both HOG which gives texture information about the image and color histogram which gives color information alone without texture will be a give a better results than any one of them alone
 
 ##### Test Cases
+Best Validation accuracy of SVM is 47.5% and best testing accuracy is 46.5% which is about 10% higher accuracy than numbers mentioned earlier in SVM section using raw pixels as features.
 
+As for neural network : the obtained accuracy was 20% which is wrong but it was done after about 2000 different combinations of hyperparameters so we missed getting this part to the wanted accuracy.
 
 
 ##### Key Takeaways
+1. Using HOG and color histograms will give better features than that of raw pixels
 
 
 
